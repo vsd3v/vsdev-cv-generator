@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vsdev. // editable cv</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&display=swap');
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      font-family: 'Open Sans', Arial, sans-serif;
+      color: #333;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .resume-page {
+      width: 210mm;
+      height: 297mm;
+      margin-bottom: 20px;
+      background-color: white;
+      position: relative;
+      padding: 20mm;
+      box-sizing: border-box;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    [contenteditable="true"] {
+        outline: 1px dashed #3498db; /* Light blue dashed outline for editable fields */
+        cursor: text;
+    }
+    [contenteditable="true"]:hover, [contenteditable="true"]:focus {
+        background-color: #f0f7ff; /* Light blue background on hover/focus */
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 12px;
+    }
+    
+    .name {
+      font-family: 'Roboto', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    
+    .personal-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      margin-top: 3px;
+    }
+    
+    .personal-info-item {
+      font-size: 12px;
+      color: #555;
+      display: flex;
+      align-items: center;
+    }
+    
+    .personal-info-item strong {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-right: 5px;
+    }
+    
+    .contact-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 8px;
+      max-width: 500px;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      width: auto;
+    }
+    
+    .contact-icon {
+      margin-right: 5px;
+      color: #3498db;
+      font-size: 12px;
+      text-align: center;
+    }
+    
+    .contact-text, .contact-link {
+      font-size: 12px;
+      color: #555;
+    }
+    
+    .contact-link {
+      color: #3498db;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .contact-link:hover {
+      color: #2980b9;
+      text-decoration: underline;
+    }
+    
+    .photo-placeholder { /* You can make the image src editable if you know how to use dev tools or add a simple input for it */
+      width: 100px;
+      height: 130px;
+      background-color: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .section {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    
+    .section-title { /* Section titles can also be made editable if needed */
+      font-family: 'Roboto', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background-color: #3498db;
+      margin-right: 6px;
+      border-radius: 50%;
+    }
+    
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, #3498db, #f5f5f5);
+      margin-bottom: 8px;
+    }
+    
+    p {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 12px;
+      line-height: 1.3;
+      color: #444;
+      text-align: justify;
+    }
+    
+    .timeline-item, .education-item, .project-item, .volunteer-item {
+      margin-bottom: 10px;
+      padding-left: 10px;
+      border-left: 1px solid #e0e6ed;
+      padding-bottom: 2px;
+    }
+    
+    .timeline-header, .education-header, .volunteer-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 3px;
+      align-items: baseline;
+    }
+    
+    .timeline-title, .education-title, .project-title, .volunteer-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: #2c3e50;
+    }
+    
+    .timeline-period, .education-period, .volunteer-period {
+      font-size: 11px;
+      color: #3498db;
+      font-weight: 600;
+      background-color: #f0f7ff;
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+    
+    .timeline-location {
+      font-size: 11px;
+      font-style: italic;
+      margin-bottom: 3px;
+      color: #666;
+    }
+    
+    .description-text {
+      font-size: 12px;
+      white-space: pre-line;
+      color: #444;
+      line-height: 1.3;
+    }
+    
+    .description-text-item {
+      display: flex;
+      margin-bottom: 1px;
+      font-size: 12px;
+      color: #444;
+      line-height: 1.3;
+    }
+    
+    .description-text-item::before {
+      content: "•";
+      margin-right: 5px;
+      color: #3498db;
+      flex-shrink: 0;
+    }
+    
+    .technologies {
+      font-size: 11px;
+      font-style: italic;
+      color: #666;
+      margin-top: 3px;
+      background-color: #f8f9fa;
+      padding: 1px 5px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    
+    .skills-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .skills-table th, .skills-table td {
+      border: 1px solid #e0e6ed;
+      padding: 4px 8px;
+      text-align: left;
+      font-size: 12px;
+    }
+    
+    .skills-table th {
+      background-color: #f0f7ff;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    
+    .skills-table tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    
+    .languages-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+    }
+    
+    .language-item {
+      background-color: #f0f7ff;
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+    }
+    
+    .language-level {
+      display: inline-block;
+      margin-left: 4px;
+      font-weight: 600;
+      color: #3498db;
+    }
+    
+    .certifications-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    .certification-item {
+      margin-bottom: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: baseline;
+      color: #444;
+    }
+    
+    .certification-item::before {
+      content: "✓";
+      margin-right: 5px;
+      color: #3498db;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    .interests-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    .interest-item {
+      margin-bottom: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: baseline;
+      color: #444;
+      line-height: 1.3;
+    }
+    
+    .interest-item::before {
+      content: "•";
+      margin-right: 5px;
+      color: #3498db;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    .page-number {
+      position: absolute;
+      bottom: 15px;
+      right: 20px;
+      font-size: 10px;
+      color: #999;
+      font-style: italic;
+    }
+    
+    .btn-print {
+      padding: 8px 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      transition: background-color 0.2s;
+      margin: 10px 5px 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .btn-print:hover {
+      background-color: #2980b9;
+    }
+    
+    .instructions {
+      max-width: 800px; /* Increased width for more text */
+      margin: 0 auto 20px;
+      padding: 15px;
+      background-color: #fff8e1; /* Light yellow for edit instructions */
+      border: 1px solid #ffe57f; /* Yellow border */
+      border-radius: 4px;
+      font-size: 14px;
+      color: #555;
+    }
+    
+    .instructions h3 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    
+    .instructions ul {
+      margin-bottom: 0;
+      padding-left: 20px;
+    }
+     .instructions code {
+      background-color: #eee;
+      padding: 1px 3px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      
+      html, body {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 0;
+        background: none;
+      }
+      
+      .container {
+        padding: 0;
+      }
+      
+      .resume-page {
+        margin: 0;
+        padding: 20mm;
+        box-shadow: none;
+        page-break-after: always;
+      }
+      
+      .instructions, .btn-print {
+        display: none;
+      }
+
+      [contenteditable="true"] { /* Remove editing indicators for print */
+        outline: none;
+        background-color: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="instructions">
+        <h3>How to Edit and Save This Resume:</h3>
+        <ul>
+            <li><strong>Editing:</strong> Simply click on the text fields (they will be highlighted with a dotted line when hovered over) and start typing your text. You can change the name, contacts, work experience, education, and other sections.</li>
+            <li><strong>Photo:</strong> To change the photo, you will need to edit the HTML code. Find the <code>&lt;img src="..."&gt;</code> tag and replace the URL in the <code>src</code> attribute with the link to your photo. Alternatively, open the file in a text editor and change the photo path.</li>
+            <li><strong>Adding/Removing Sections/Items:</strong> To add new items of experience, education, etc., or entire sections, you will need to copy and paste existing HTML blocks (for example, the <code>&lt;div class="timeline-item"&gt;...&lt;/div&gt;</code> block) and edit their content. This requires basic knowledge of HTML. Deleting sections is similar – just remove the corresponding HTML block.</li>
+            <li><strong>Saving Changes:</strong> After editing in the browser, to save the modified HTML file, use the browser function "Save page as..." (usually Ctrl+S or Cmd+S) and choose the type "Web page, HTML only" or "Web page, complete".</li>
+            <li><strong>Creating PDF:</strong>
+                <ul>
+                    <li>Click the "Print/Save as PDF" button.</li>
+                    <li>In the print dialog, select "Save as PDF" or a printer with PDF functionality.</li>
+                    <li>Make sure the "Background graphics" option is enabled.</li>
+                    <li>Select "A4" as the paper format.</li>
+                    <li>Set margins to "None" or "Minimum".</li>
+                    <li>Disable headers and footers if they are present.</li>
+                    <li>Click "Save" or "Print" to create the PDF.</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+    
+    <div class="resume-page">
+      <div class="header">
+        <div>
+          <h1 class="name" contenteditable="true">Vladislav Slugin</h1>
+          
+          <div class="personal-info">
+            <div class="personal-info-item">
+              <strong>Geburtsdatum:</strong> <span contenteditable="true">17. Dezember 2002</span>
+            </div>
+            <div class="personal-info-item">
+              <strong>Geburtsort:</strong> <span contenteditable="true">Almaty, Kasachstan</span>
+            </div>
+          </div>
+          
+          <div class="contact-info">
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <span class="contact-text" contenteditable="true">Trier, Deutschland</span>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">✉️</div>
+              <a class="contact-link" href="mailto:vladslugin987@gmail.com" contenteditable="true">vladslugin987@gmail.com</a>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📱</div>
+              <span class="contact-text" contenteditable="true">+49 176 3763 1100</span>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🌐</div>
+              <a class="contact-link" href="https://vsdev.top" contenteditable="true">vsdev.top</a>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🔗</div>
+              <a class="contact-link" href="https://linkedin.com/in/vladislav-slugin" contenteditable="true">linkedin.com/in/vladislav-slugin</a>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🐙</div>
+              <a class="contact-link" href="https://github.com/vladslugin987" contenteditable="true">github.com/vladslugin987</a>
+            </div>
+          </div>
+        </div>
+        
+	<img 
+	  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZxjry9GUKiTTpPDnnmloN-5sOe8Hcr_Qz4Q&s" 
+	  alt="Фото профиля" 
+	  style="width: 100px; height: 130px; object-fit: cover; border: 1px solid #e0e0e0; border-radius: 3px;"
+	/>
+        
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Profil</h2>
+        <div class="section-divider"></div>
+        <div>
+          <p contenteditable="true">
+            Engagierter Full-Stack-Entwickler mit Fachwissen in Automatisierung und plattformübergreifenden Anwendungen. Entwicklung innovativer Lösungen mit Fokus auf sauberen Code und optimierte Benutzererfahrungen. Aktiver Beitragender zu Open-Source-Projekten mit Leidenschaft für kontinuierliches Lernen und internationale Zusammenarbeit.
+          </p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Berufliches Ziel</h2>
+        <div class="section-divider"></div>
+        <div>
+          <p contenteditable="true">
+            Detailorientierter Softwareentwickler auf der Suche nach einer Position als Werkstudent, Praktikant oder Junior Developer. Begeistert von kontinuierlichem Lernen, effektiver Zusammenarbeit und dem Beitrag zu innovativen Projekten.
+          </p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Berufserfahrung</h2>
+        <div class="section-divider"></div>
+        
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <div class="timeline-title" contenteditable="true">Werkstudent Informatik bei HASE Kaminofenbau GmbH</div>
+            <div class="timeline-period" contenteditable="true">Apr 2025 - Heute</div>
+          </div>
+          <div class="timeline-location" contenteditable="true">Trier, Deutschland</div>
+          <div class="description-text-item" contenteditable="true">
+            Web- und Softwareentwicklung für interne Systeme und Kundenanwendungen
+          </div>
+          <div class="technologies" contenteditable="true">Technologien: HTML, CSS, JavaScript, React.js, Arduino, Firebase</div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <div class="timeline-title" contenteditable="true">Werkstudent IT-Support bei Devoteam</div>
+            <div class="timeline-period" contenteditable="true">Aug 2023 - Feb 2025</div>
+          </div>
+          <div class="timeline-location" contenteditable="true">Frankfurt/Remote</div>
+          <div class="description-text-item" contenteditable="true">
+            Technischer Support für Unternehmensangestellte in Deutschland
+          </div>
+          <div class="description-text-item" contenteditable="true">
+            Verwaltung und Optimierung der IT-Infrastruktur
+          </div>
+          <div class="description-text-item" contenteditable="true">
+            Entwicklung von Automatisierungstools und internen Webanwendungen
+          </div>
+          <div class="technologies" contenteditable="true">Technologien: Python, TypeScript, Google Apps Script, JavaScript</div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <div class="timeline-title" contenteditable="true">Freiberuflicher Full-Stack-Entwickler</div>
+            <div class="timeline-period" contenteditable="true">Mär 2018 - Heute</div>
+          </div>
+          <div class="description-text-item" contenteditable="true">
+            Erstellung von Desktop- und Webanwendungen nach Kundenanforderungen
+          </div>
+          <div class="description-text-item" contenteditable="true">
+            Design und Implementierung von Automatisierungsskripten und Bots
+          </div>
+          <div class="technologies" contenteditable="true">Technologien: Java, Python, React, Node.js, Vite</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Ausbildung</h2>
+        <div class="section-divider"></div>
+        
+        <div class="education-item">
+          <div class="education-header">
+            <div class="education-title" contenteditable="true">Hochschule Trier – University of Applied Sciences</div>
+            <div class="education-period" contenteditable="true">Apr 2025 - Heute</div>
+          </div>
+          <div style="font-size: 12px; color: #444;" contenteditable="true">Informatik, Bachelor (laufend)</div>
+        </div>
+        
+        <div class="education-item">
+          <div class="education-header">
+            <div class="education-title" contenteditable="true">Goethe Universität Frankfurt am Main</div>
+            <div class="education-period" contenteditable="true">Apr 2022 - Mär 2025</div>
+          </div>
+          <div style="font-size: 12px; color: #444;" contenteditable="true">Informatik, Bachelor (nicht abgeschlossen)</div>
+        </div>
+        
+        <div class="education-item">
+          <div class="education-header">
+            <div class="education-title" contenteditable="true">Studienkolleg Jena</div>
+            <div class="education-period" contenteditable="true">Apr 2021 - Nov 2021</div>
+          </div>
+          <div style="font-size: 12px; color: #444;" contenteditable="true">T-Kurs, Feststellungsprüfung: 07.01.2022</div>
+        </div>
+        
+        <div class="education-item">
+          <div class="education-header">
+            <div class="education-title" contenteditable="true">School-Gymnasium No. 8 Almaty, Kasachstan</div>
+            <div class="education-period" contenteditable="true">Sep 2009 - Jun 2020</div>
+          </div>
+          <div style="font-size: 12px; color: #444;" contenteditable="true">Zeugnis der allgemeinen mittleren Bildung</div>
+        </div>
+      </div>
+      
+      <div class="page-number">Seite 1/2</div>
+    </div>
+    
+    <div class="resume-page">
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Bemerkenswerte Projekte</h2>
+        <div class="section-divider"></div>
+        
+        <div class="project-item">
+          <div class="project-title" contenteditable="true">EnDeCode – Anti-Piraterie-Software</div>
+          <div style="margin-bottom: 5px; font-size: 12px; color: #444; line-height: 1.3;" contenteditable="true">
+            Dateischutz-Tool mit unsichtbaren digitalen Wasserzeichen für Urheberrechtsverfolgung. In einen Sicherheits-Workflow integriert zur Nachweisführung und Leck-Erkennung.
+          </div>
+          <div class="technologies" contenteditable="true">Technologien: Python, Kotlin, Compose Multiplatform, OpenCV</div>
+        </div>
+        
+        <div class="project-item">
+          <div class="project-title" contenteditable="true">vsdev.top – Portfolio-Webseite</div>
+          <div style="margin-bottom: 5px; font-size: 12px; color: #444; line-height: 1.3;" contenteditable="true">
+            Persönliche Portfolio-Plattform mit Admin-Interface und Telegram-Inhaltssynchronisierung
+          </div>
+          <div class="technologies" contenteditable="true">Technologien: React, Vite, Node.js, MySQL</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Technische Fähigkeiten</h2>
+        <div class="section-divider"></div>
+        
+        <table class="skills-table">
+          <thead>
+            <tr>
+              <th>Kategorie</th>
+              <th>Fähigkeiten</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true">Programmiersprachen</td>
+              <td contenteditable="true">Python, Java, Kotlin, JavaScript, HTML/CSS</td>
+            </tr>
+            <tr>
+              <td contenteditable="true">Frameworks / Tools</td>
+              <td contenteditable="true">React.js, Node.js, Vite, Tailwind CSS, Docker, Git</td>
+            </tr>
+            <tr>
+              <td contenteditable="true">Datenbanken</td>
+              <td contenteditable="true">MySQL, MongoDB, PostgreSQL</td>
+            </tr>
+            <tr>
+              <td contenteditable="true">Sonstige</td>
+              <td contenteditable="true">Google Apps Script, OpenCV, Compose Multiplatform, TypeScript</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Sprachen</h2>
+        <div class="section-divider"></div>
+        
+        <div class="languages-container">
+          <div class="language-item" contenteditable="true">Englisch <span class="language-level">B2</span></div>
+          <div class="language-item" contenteditable="true">Deutsch <span class="language-level">C1</span></div>
+          <div class="language-item" contenteditable="true">Russisch <span class="language-level">C2</span></div>
+          <div class="language-item" contenteditable="true">Kasachisch <span class="language-level">A1</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Zertifikate</h2>
+        <div class="section-divider"></div>
+        
+        <ul class="certifications-list">
+          <li class="certification-item" contenteditable="true">Web Development MERN Stack (MongoDB, Express, React, Node.js) – Decode.kz, 2020</li>
+          <li class="certification-item" contenteditable="true">HTML, CSS, JavaScript, PHP – Sololearn, 2018</li>
+          <li class="certification-item" contenteditable="true">Web Developer Beginner – Decode.kz, 2019</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Ehrenamtliche Tätigkeit</h2>
+        <div class="section-divider"></div>
+        
+        <div class="volunteer-item">
+          <div class="volunteer-header">
+            <div class="volunteer-title" contenteditable="true">Buddy Program Mentor</div>
+            <div class="volunteer-period" contenteditable="true">Apr 2024 - Aug 2024</div>
+          </div>
+          <div style="font-size: 12px; color: #444; margin-top: 2px;" contenteditable="true">
+            Begleitung internationaler Studierender bei der akademischen Orientierung und sozialen Integration
+          </div>
+        </div>
+        
+        <div class="volunteer-item">
+          <div class="volunteer-header">
+            <div class="volunteer-title" contenteditable="true">AWP Study Friend Program Mentor</div>
+            <div class="volunteer-period" contenteditable="true">Okt 2024 - Mär 2025</div>
+          </div>
+          <div style="font-size: 12px; color: #444; margin-top: 2px;" contenteditable="true">
+            Unterstützung geflüchteter Studierender bei der universitären Anpassung
+          </div>
+        </div>
+        
+        <div class="volunteer-item">
+          <div class="volunteer-header">
+            <div class="volunteer-title" contenteditable="true">AI Week Frankfurt</div>
+            <div class="volunteer-period" contenteditable="true">Okt 2024</div>
+          </div>
+          <div style="font-size: 12px; color: #444; margin-top: 2px;" contenteditable="true">
+            Aktiver Freiwilliger und Teilnehmer einer Konferenz zu KI-Anwendungen
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title" contenteditable="true">Interessen</h2>
+        <div class="section-divider"></div>
+        
+        <ul class="interests-list">
+          <li class="interest-item" contenteditable="true">Teilnahme an Tech-Community-Veranstaltungen (Workshops, Meetups, Hackathons)</li>
+          <li class="interest-item" contenteditable="true">Eigenständige Spieleentwicklung mit Fokus auf innovative Spielmechaniken</li>
+        </ul>
+      </div>
+      
+      <div class="page-number">Seite 2/2</div>
+    </div>
+
+    <button onclick="window.print()" class="btn-print">Save as PDF</button>
+  </div>
+</body>
+</html>
